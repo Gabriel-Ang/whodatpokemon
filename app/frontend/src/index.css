@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+#root{
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+.appbar{
+  height: 60px;
+  position: fixed;
+  top: 0;
+}
+
+.menu-item{
+  border-radius: 6px;
+}
+
+.content{
+  padding: 60px 0 0 0;
+}
 
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;

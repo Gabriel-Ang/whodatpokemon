@@ -3,6 +3,9 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { AppbarItem } from "../components/AppBar";
 
+import '@radix-ui/themes/styles.css';
+import { Theme } from '@radix-ui/themes';
+
 function MainLayout() {
     const [appbarIndex, setAppbarIndex] = useState(0);
     const appbarItems : AppbarItem[] = [
@@ -27,12 +30,16 @@ function MainLayout() {
 
     return (
     <>
-        <AppBar
-        logo={ appbarLogo }
-        menuItems={ appbarItems }
-        onItemSelect={ handleAppbarItemSelect }
-        />
-        <Outlet />
+        <Theme className="flex flex-col">
+            <AppBar
+            logo={ appbarLogo }
+            menuItems={ appbarItems }
+            onItemSelect={ handleAppbarItemSelect }
+            />
+            <div className="content flex flex-1">
+                <Outlet />
+            </div>
+        </Theme>
     </>
     )
 }

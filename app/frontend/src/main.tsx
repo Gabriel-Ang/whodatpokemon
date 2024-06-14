@@ -13,7 +13,6 @@ import MainLayout from './layout/MainLayout.tsx'
 
 const router = createBrowserRouter([
   {
-    // path: "/",
     element: <MainLayout />,
     errorElement: <ErrorPage />,
     children: [

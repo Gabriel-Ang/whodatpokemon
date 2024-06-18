@@ -22,6 +22,7 @@ const CheckboxCard = ({ items } : Props) => {
             return (
               <CheckboxCards.Item 
               value={ item.value }
+              key={ item.value }
               onClick={ () => item.onItemClick(item.value) }
               >
                 <Flex 

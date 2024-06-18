@@ -1,7 +1,6 @@
-import AppBar from "../components/AppBar";
+import AppBar, { AppbarItem } from "./AppBar";
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { AppbarItem } from "../components/AppBar";
 
 import '@radix-ui/themes/styles.css';
 import { Theme } from '@radix-ui/themes';
@@ -30,7 +29,7 @@ function MainLayout() {
 
     return (
     <>
-        <Theme className="flex flex-col">
+        <Theme className="flex flex-col" appearance="dark">
             <AppBar
             logo={ appbarLogo }
             menuItems={ appbarItems }
@@ -44,4 +43,4 @@ function MainLayout() {
     )
 }
 
-export default MainLayout
+export default MainLayout;

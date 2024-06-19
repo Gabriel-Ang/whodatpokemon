@@ -1,6 +1,6 @@
-import { RequestHandler } from "express";
+import express, { Express, Request, Response, NextFunction, RequestHandler } from "express";
 
-export const getPlay : RequestHandler = (req, res, next) => {
+export const getPlay : RequestHandler = (req : Request, res : Response, next : NextFunction) => {
     const text : any = req.body.text;
     // const text = (req.body as { text:string } ).text;
     res.status(200).json({
@@ -8,7 +8,7 @@ export const getPlay : RequestHandler = (req, res, next) => {
     })
 }
 
-export const createPlay : RequestHandler = (req, res, next) => {
+export const createPlay : RequestHandler = (req : Request, res : Response, next : NextFunction) => {
     const generation : any = req.body.generation;
     console.log(generation);
     

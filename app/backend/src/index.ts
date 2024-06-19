@@ -1,7 +1,8 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express, Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
-import axios, { AxiosResponse, AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
-import playRoutes from './routes/play';
+// import axios, { AxiosResponse, AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
+import playRoutes from './routes/play.route';
+import userRoutes from './routes/user.route';
 
 dotenv.config();
 
@@ -13,24 +14,33 @@ app.listen(port, () => {
     console.log(`[server]: Server is running at http://localhost:${port}`);
 });
 
+// logger middleware
+app.use((req : Request, res : Response , next : NextFunction) => {
+    // const dateNow = Date.now();
+    // console.log('Request Type:', req.method, req.originalUrl, new Date(dateNow).toString());
+    console.log('Request Type:', req.method, req.originalUrl, new Date().toISOString());
+    next();
+});
+
 app.get('/', (req : Request, res : Response) => {
     res.send('hello world');
 });
 
 app.use('/play', playRoutes);
+app.use('/user', userRoutes);
 
 
-const fetchPokemon = async () : Promise<any> => {
-    try{
-        const response: AxiosResponse = await axios.get("https://pokeapi.co/api/v2/pokemon/ditto");
-        const responseData : any = response.data;
-        return responseData;
-    }
-    catch(err){
-        console.error(err);
-        throw err;
-    }
-}
+// const fetchPokemon = async () : Promise<any> => {
+//     try{
+//         const response: AxiosResponse = await axios.get("https://pokeapi.co/api/v2/pokemon/ditto");
+//         const responseData : any = response.data;
+//         return responseData;
+//     }
+//     catch(err){
+//         console.error(err);
+//         throw err;
+//     }
+// }
 
 // app.get('/', async (req : Request, res : Response) => {
 //     // const status : any = {

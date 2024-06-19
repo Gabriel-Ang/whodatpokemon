@@ -1,7 +1,7 @@
 import express, { Express, Request, Response, Router, json } from "express";
 import dotenv from "dotenv";
-import axios, { AxiosResponse, AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
-import { getPlay, createPlay } from "../controllers/play";
+// import axios, { AxiosResponse, AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
+import { getPlay, createPlay } from "../controllers/play.controller";
 
 dotenv.config();
 

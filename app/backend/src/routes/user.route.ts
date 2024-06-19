@@ -17,3 +17,5 @@ dotenv.config();
 const app : Express = express();
 const router : Router = express.Router();
 app.use(express.json());
+
+export default router;

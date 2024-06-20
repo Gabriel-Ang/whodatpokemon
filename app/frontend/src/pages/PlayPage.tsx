@@ -14,10 +14,10 @@ const axiosInstance = axios.create({
 });
 
 function PlayPage() {
-
   const [selectedGen, setSelectedGen] = useState([]);
   const [rounds, setRounds] = useState(5);
   const [btndisabled, setBtn] = useState(true);
+  const [settingsVisible, setSettingsVisibility] = useState(true);
 
   useEffect(() => {
     disableBtn();
@@ -28,6 +28,7 @@ function PlayPage() {
   }
 
   const startGame = async () => {
+    setSettingsVisibility(false);
     const reqBody : any = {
       "generation" : selectedGen,
       "rounds" : rounds
@@ -112,39 +113,48 @@ function PlayPage() {
   ];
 
   return (
-    <div className="playpage-container flex flex-1 flex-col justify-evenly">
+    <div className="playpage-container flex flex-1">
 
-      <div className="generation-wrapper">
-        <span>Generation</span>
-          <div className="switches-wrapper">
-            <Switches items={ switchItems } />
+      { 
+        settingsVisible && 
+
+        <div className="gameSettings-container flex flex-1 flex-col justify-start p-6 gap-4">
+
+          <div className="generation-wrapper flex flex-col gap-2">
+            <span>Generation</span>
+              <div className="switches-wrapper">
+                <Switches items={ switchItems } />
+              </div>
           </div>
-      </div>
 
-      <div className="rounds-wrapper">
-        <span>Number of Rounds: { rounds }</span>
-        <div className="slider-wrapper w-1/2">
-          <Slider  
-          size="2"
-          defaultValue={ [25] }
-          min={ 5 }
-          step={ 5 }
-          onValueChange={ (value) => onNumberOfRoundsChange(value) }
-          />
-        </div>
-      </div>
+          <div className="rounds-wrapper flex flex-col gap-2">
+            <span>Number of Rounds: { rounds }</span>
+            <div className="slider-wrapper w-1/2">
+              <Slider  
+              size="2"
+              defaultValue={ [25] }
+              min={ 5 }
+              step={ 5 }
+              onValueChange={ (value) => onNumberOfRoundsChange(value) }
+              />
+            </div>
+          </div>
 
-      <div className="playbtn-wrapper">
-        <Button
-        color="green"
-        variant="soft"
-        className="btn"
-        disabled={ btndisabled }
-        onClick={ () => startGame() }
-        >
-          Let's Go!
-        </Button>
-      </div>
+          <div className="playbtn-wrapper">
+            <Button
+            color="green"
+            variant="soft"
+            className="btn"
+            disabled={ btndisabled }
+            onClick={ () => startGame() }
+            >
+              Start Game
+            </Button>
+          </div>
+
+        </div> 
+      }
+      
 
     </div>
   )

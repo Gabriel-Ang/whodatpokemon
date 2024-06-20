@@ -1,37 +1,46 @@
 // hooks
 import { useState, useEffect } from "react";
-
+import axios, { AxiosResponse, AxiosRequestConfig, RawAxiosRequestHeaders, AxiosInstance } from 'axios';
 // components
-import CheckboxCard, { CheckboxCardItem } from "../components/CheckboxCard";
 import Switches, { SwitchItem } from "../components/Switches";
-
 // radix ui
 import { Slider, Button } from "@radix-ui/themes";
-
+// styles
 import '../index.css';
+
+const apiUrl = import.meta.env.VITE_APP_URL_DEV;
+const axiosInstance = axios.create({
+  baseURL: apiUrl
+});
 
 function PlayPage() {
 
   const [selectedGen, setSelectedGen] = useState([]);
   const [rounds, setRounds] = useState(5);
+  const [btndisabled, setBtn] = useState(true);
 
   useEffect(() => {
-    console.log(selectedGen);
+    disableBtn();
   }, [selectedGen]);
 
-  const onSwitchItemClick = (data : any) => {
-    console.log(data);
-    setSelectedGen((prevSelectedGen : any) => {
-      if(prevSelectedGen.includes(data)){
-        return prevSelectedGen.filter((gen : any) => gen !== data);
-      }else{
-        return [...prevSelectedGen, data];
-      }
-    });
+  const disableBtn = () => {
+    selectedGen.length === 0 ? setBtn(true) : setBtn(false);
   }
 
-  const onCheckboxCardItemClick = (data : any) => {
-    console.log(data);
+  const startGame = async () => {
+    const reqBody : any = {
+      "generation" : selectedGen,
+      "rounds" : rounds
+    }
+    try{
+      const response = await axiosInstance.post('/play', reqBody);
+      console.log(response);
+    }catch(err){
+      console.error('Error starting game: ', err);
+    }
+  }
+
+  const onSwitchItemClick = (data : any) => {
     setSelectedGen((prevSelectedGen : any) => {
       if(prevSelectedGen.includes(data)){
         return prevSelectedGen.filter((gen : any) => gen !== data);
@@ -42,69 +51,74 @@ function PlayPage() {
   }
 
   const onNumberOfRoundsChange = (data : any) => {
-    console.log(data / 5);
     setRounds(data/5);
   }
 
-  const checkboxCardItems : CheckboxCardItem[] = [
-    {
-      primaryText : 'Gen I',
-      secondaryText : 'Pokemon Red, Blue, Green, Yellow',
-      value : 'gen1',
-      onItemClick : onCheckboxCardItemClick
-    },
-    {
-      primaryText : 'Gen II',
-      secondaryText : 'Pokemon Gold, Silver, Crystal',
-      value : 'gen2',
-      onItemClick : onCheckboxCardItemClick
-    },
-    {
-      primaryText : 'Gen II',
-      secondaryText : 'Pokemon Emerald, Ruby, Sapphire',
-      value : 'gen3',
-      onItemClick : onCheckboxCardItemClick
-    },
-    {
-      primaryText : 'Gen IV',
-      secondaryText : 'Pokemon Diamond, Pearl',
-      value : 'gen4',
-      onItemClick : onCheckboxCardItemClick
-    },
-  ];
-
   const switchItems : SwitchItem[] = [
     {
-      switchLabel : "Generation I",
-      switchValue : "gen1",
+      switchLabel : "Generation 1",
+      switchValue : 1,
       tooltipContent : "Red, Blue, Green, Yellow",
       onItemClick : onSwitchItemClick,
     },
     {
-      switchLabel : "Generation II",
-      switchValue : "gen2",
+      switchLabel : "Generation 2",
+      switchValue : 2,
       tooltipContent : "Gold, Silver, Crystal",
       onItemClick : onSwitchItemClick,
     },
     {
-      switchLabel : "Generation III",
-      switchValue : "gen3",
+      switchLabel : "Generation 3",
+      switchValue : 3,
       tooltipContent : "Emerald, Ruby, Sapphire",
+      onItemClick : onSwitchItemClick,
+    },
+    {
+      switchLabel : "Generation 4",
+      switchValue : 4,
+      tooltipContent : "Diamond, Pearl, Platinum",
+      onItemClick : onSwitchItemClick,
+    },
+    {
+      switchLabel : "Generation 5",
+      switchValue : 5,
+      tooltipContent : "Black, White",
+      onItemClick : onSwitchItemClick,
+    },
+    {
+      switchLabel : "Generation 6",
+      switchValue : 6,
+      tooltipContent : "X, Y, Omega Ruby, Alpha Sapphire",
+      onItemClick : onSwitchItemClick,
+    },
+    {
+      switchLabel : "Generation 7",
+      switchValue : 7,
+      tooltipContent : "Sun, Moon",
+      onItemClick : onSwitchItemClick,
+    },
+    {
+      switchLabel : "Generation 8",
+      switchValue : 8,
+      tooltipContent : "Sword, Shield, Brilliant Diamond, Shining Pearl",
+      onItemClick : onSwitchItemClick,
+    },
+    {
+      switchLabel : "Generation 9",
+      switchValue : 9,
+      tooltipContent : "Scarlet, Violet",
       onItemClick : onSwitchItemClick,
     },
   ];
 
   return (
-    <div className="playpage-container flex flex-1 flex-col">
+    <div className="playpage-container flex flex-1 flex-col justify-evenly">
 
       <div className="generation-wrapper">
         <span>Generation</span>
           <div className="switches-wrapper">
             <Switches items={ switchItems } />
           </div>
-        {/* <CheckboxCard
-        items={ checkboxCardItems }
-        /> */}
       </div>
 
       <div className="rounds-wrapper">
@@ -120,15 +134,13 @@ function PlayPage() {
         </div>
       </div>
 
-      {/* <div className="switches-wrapper">
-        <Switches items={ switchItems } />
-      </div> */}
-
       <div className="playbtn-wrapper">
         <Button
         color="green"
         variant="soft"
         className="btn"
+        disabled={ btndisabled }
+        onClick={ () => startGame() }
         >
           Let's Go!
         </Button>

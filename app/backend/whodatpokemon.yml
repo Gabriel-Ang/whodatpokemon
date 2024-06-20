@@ -1,0 +1,83 @@
+openapi: 3.0.3
+
+info:
+  title: Swagger Petstore - OpenAPI 3.0
+  description: This is a full-stack application made with React and Express, documented with Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: Gabriel Ang
+    email: gabrielang.inbox@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+  
+servers:
+  - url: http://localhost:3000
+  
+tags:
+  - name: Game
+    description: Game related endpoints
+  - name: User
+    description: User related endpoints
+    
+paths:
+  /game:
+    post:
+      tags:
+        - Game
+      summary: Create Game
+      requestBody: 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Game'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: DB error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        error_message:
+          type: string
+          
+    Game:
+      type: object
+      properties:
+        generation:
+          type: array
+          items:
+              type: string
+        rounds:
+          type: number
+          
+    User:
+      type: object
+      properties:
+        user_id:
+          type: string
+          
+            
+      

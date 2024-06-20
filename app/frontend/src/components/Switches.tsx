@@ -4,7 +4,7 @@ import { InfoCircledIcon } from '@radix-ui/react-icons';
 
 export interface SwitchItem {
     switchLabel : string;
-    switchValue : string;
+    switchValue : string | number;
     tooltipContent : string;
     onItemClick : (data: any) => void;
 }
@@ -19,18 +19,20 @@ const Switches = ({ items } : Props) => {
         <div className="switches flex flex-col gap-4">
             { items.map(item => {
                 return (
-                    <div className="switch flex gap-4">
+                    <div 
+                    className="switch flex gap-4" 
+                    key={ item.switchValue }
+                    >
                         <div 
                         className="switch-label" 
-                        style={{ minWidth : '150px'}}
+                        style={ { minWidth : '150px'} }
                         >
                             { item.switchLabel }
                         </div>
                         <div className="switch-btn">
                             <Switch 
                             color="green"
-                            onClick={ () => item.onItemClick(item.switchValue)}
-                            key={item.switchValue}
+                            onClick={ () => item.onItemClick(item.switchValue) }
                              />
                         </div>
                         <div className="switch-tooltip">

@@ -1,16 +1,19 @@
 import express, { Express, Request, Response, NextFunction, RequestHandler } from "express";
+import axios, { AxiosResponse, AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
 
 export const getPlay : RequestHandler = (req : Request, res : Response, next : NextFunction) => {
-    // const text : any = req.body.text;
-    // res.status(200).json({
-    //     generation : [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    // });
     res.send('playpage');
 }
 
 interface PokedexGen {
     gen : number;
     index : [number, number]
+}
+
+interface Pokemon {
+    id : number;
+    name : string;
+    sprite : string;
 }
 
 const pokedex : PokedexGen[] = [
@@ -52,23 +55,24 @@ const pokedex : PokedexGen[] = [
     },
 ];
 
-export const createPlay : RequestHandler = (req : Request, res : Response, next : NextFunction) => {
+export const createPlay : RequestHandler = async (req : Request, res : Response, next : NextFunction) => {
     const generation : number[] = req.body.generation;
     const rounds : number = req.body.rounds;
-    console.log(req.body);
     const selectedGens : PokedexGen[] = generation.map(num => pokedex[num - 1]);
     const range : number[] = getRange(selectedGens);
     const selectedPokemons : any = getRandomUniqueNumbers(rounds, range); // debug why I can't use static type, have to use any
-    console.log('selectedgens', selectedGens);
-    console.log('range', range);
-    console.log('selectedPokemons', selectedPokemons);
-    // const pokemonPromises : Promise<any>[] = [];
-    // for(let i = 0; i < rounds; i++){
-    // }
-    res.status(201).json({
-        'generation' : generation,
-        'rounds' : rounds
-    });
+    try{
+        const dataIn : any = await fetchPokemon(rounds, selectedPokemons);
+        const pokemon : Pokemon[] = dataToPokemon(dataIn);
+        res.status(200).json({
+            "pokemon" : pokemon
+        });
+    }catch(err){
+        console.error(err);
+        res.status(500).json({
+            "message" : "Failed to fetch Pokemon data!"
+        });
+    }
 }
 
 function getRange(data : PokedexGen[]) : number[] {
@@ -100,4 +104,27 @@ function getRandomUniqueNumbers(count : number, range : number[] ) {
         uniqueNumbers.add(randomNumber);
     }
     return Array.from(uniqueNumbers);
+}
+
+async function fetchPokemon(count : number, ids : number[]) : Promise<any>{
+    const pokeAPI : string = "https://pokeapi.co/api/v2/pokemon/";
+    const requests = ids.map(id => axios.get(`${pokeAPI}/${id}`));
+    try{
+        const responses = await Promise.all(requests);
+        return responses.map(response => response.data);
+    }catch(err){
+        console.error("Error encountered when fetching Pokemon", err);
+        throw err;
+    }
+}
+
+function dataToPokemon(dataIn : any) : Pokemon[]{
+    const res : Pokemon[] = dataIn.map((obj : any) => {
+        return {
+            'id' : obj.id,
+            'name' : obj.name,
+            'sprite' : obj.sprites.front_default
+        }
+    });
+    return res;
 }

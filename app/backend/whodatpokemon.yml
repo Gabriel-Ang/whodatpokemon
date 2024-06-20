@@ -39,7 +39,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Game'
+                $ref: '#/components/schemas/Pokemon'
         '400':
           description: bad request
           content:
@@ -79,5 +79,20 @@ components:
         user_id:
           type: string
           
+    Pokemon:
+      type: object
+      properties:
+        pokemon:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+              name:
+                type: string
+              sprite:
+                type: string
+              
             
       

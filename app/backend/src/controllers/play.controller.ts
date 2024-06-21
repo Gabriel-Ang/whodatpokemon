@@ -1,5 +1,6 @@
 import express, { Express, Request, Response, NextFunction, RequestHandler } from "express";
 import axios, { AxiosResponse, AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
+import { CustomError } from "../utils/CustomError";
 
 export const getPlay : RequestHandler = (req : Request, res : Response, next : NextFunction) => {
     res.send('playpage');
@@ -58,19 +59,27 @@ const pokedex : PokedexGen[] = [
 export const createPlay : RequestHandler = async (req : Request, res : Response, next : NextFunction) => {
     const generation : number[] = req.body.generation;
     const rounds : number = req.body.rounds;
-    const selectedGens : PokedexGen[] = generation.map(num => pokedex[num - 1]);
-    const range : number[] = getRange(selectedGens);
-    const selectedPokemons : any = getRandomUniqueNumbers(rounds, range); // debug why I can't use static type, have to use any
     try{
+        if (!Array.isArray(generation) || !generation.every(num => num >= 1 && num <= 9) || typeof rounds !== 'number' || rounds < 1 || rounds > 20) {
+            throw new CustomError('Validation error: Generation must be from 1 to 9 and number of rounds must be 1 to 20!', 400, { generation, rounds });
+        }
+        const selectedGens : PokedexGen[] = generation.map(num => pokedex[num - 1]);
+        const range : number[] = getRange(selectedGens);
+        const selectedPokemons : any = getRandomUniqueNumbers(rounds, range); // debug why I can't use static type, have to use any
         const dataIn : any = await fetchPokemon(rounds, selectedPokemons);
         const pokemon : Pokemon[] = dataToPokemon(dataIn);
         res.status(200).json({
             "pokemon" : pokemon
         });
-    }catch(err){
-        console.error(err);
-        res.status(500).json({
-            "message" : "Failed to fetch Pokemon data!"
+    }catch(err : any){
+        console.error({
+            "message" : err.message,
+            "status" : err.status,
+            "details" : err.details
+        });
+        res.status(err.status).json({
+            "message" : err.message,
+            "details" : err.details
         });
     }
 }

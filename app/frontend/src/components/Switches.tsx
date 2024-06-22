@@ -29,7 +29,7 @@ const Switches = ({ items } : Props) => {
                         >
                             { item.switchLabel }
                         </div>
-                        <div className="switch-btn">
+                        <div className="switch-btn flex items-center">
                             <Switch 
                             color="green"
                             onClick={ () => item.onItemClick(item.switchValue) }

@@ -8,6 +8,12 @@ import { Slider, Button } from "@radix-ui/themes";
 // styles
 import '../index.css';
 
+interface Pokemon {
+  id : number;
+  name : string;
+  sprite : string;
+}
+
 const apiUrl = import.meta.env.VITE_APP_URL_DEV;
 const axiosInstance = axios.create({
   baseURL: apiUrl
@@ -18,24 +24,59 @@ function PlayPage() {
   const [rounds, setRounds] = useState(5);
   const [btndisabled, setBtn] = useState(true);
   const [settingsVisible, setSettingsVisibility] = useState(true);
+  const [settingsTransition, setSettingsTransition] = useState(true);
+  const [gameVisible, setGameVisibility] = useState(false);
+  const [gameTransition, setGameTransition] = useState(true);
+  const [pokemon, setPokemon] = useState<Pokemon[]>([]);
+  const [spriteIndex, setSpriteIndex] = useState(0);
 
   useEffect(() => {
-    disableBtn();
+    if(settingsVisible){
+      setTimeout(() => {
+        setSettingsTransition(true);
+      }, 300);
+    }else{
+      setTimeout(() => {
+        setSettingsTransition(false);
+      }, 300);
+    }
+  }, [settingsVisible]);
+
+  useEffect(() => {
+    if(gameVisible){
+      setTimeout(() => {
+        setGameTransition(true);
+      }, 300);
+    }else{
+      setTimeout(() => {
+        setGameTransition(false);
+      }, 300);
+    }
+  }, [gameVisible]);
+
+  useEffect(() => {
+    selectedGen.length === 0 ? setBtn(true) : setBtn(false);
   }, [selectedGen]);
 
-  const disableBtn = () => {
-    selectedGen.length === 0 ? setBtn(true) : setBtn(false);
-  }
+  useEffect(() => {
+    if(pokemon.length > 0){
+      setTimeout(() => {
+        setGameVisibility(true);
+      }, 300);
+    }
+  }, [pokemon]);
 
   const startGame = async () => {
     setSettingsVisibility(false);
+    setSelectedGen([]);
+    setRounds(5);
     const reqBody : any = {
       "generation" : selectedGen,
       "rounds" : rounds
     }
     try{
       const response = await axiosInstance.post('/play', reqBody);
-      console.log(response);
+      setPokemon(response.data.pokemon);
     }catch(err){
       console.error('Error starting game: ', err);
     }
@@ -114,14 +155,14 @@ function PlayPage() {
 
   return (
     <div className="playpage-container flex flex-1">
-
+      
       { 
-        settingsVisible && 
+        settingsTransition && 
 
-        <div className="gameSettings-container flex flex-1 flex-col justify-start p-6 gap-4">
+        <div className={ `settings-container flex flex-1 flex-col justify-start p-6 gap-4 ${ settingsVisible ? 'opacity-1' : 'opacity-0' }` }>
 
           <div className="generation-wrapper flex flex-col gap-2">
-            <span>Generation</span>
+            <span>Select Generation</span>
               <div className="switches-wrapper">
                 <Switches items={ switchItems } />
               </div>
@@ -154,7 +195,42 @@ function PlayPage() {
 
         </div> 
       }
-      
+
+      {
+        gameTransition && 
+
+        <div className={ `game-container ${ gameVisible ? 'opacity-1' : 'opacity-0' }` }>
+
+          {/* <div className="background-wrapper">
+            <img 
+            src={ Background } 
+            alt="Pokemon Background" 
+            />
+          </div> */}
+          
+          <div className="sprite-wrapper">
+            {
+              <img 
+              src={ pokemon[spriteIndex]?.sprite } 
+              key={ pokemon[spriteIndex]?.id }
+              alt="Pokemon Sprite"
+              className="sprite" 
+              />
+              // pokemon.map(item => {
+              //   return (
+              //     <img 
+              //     src={ item.sprite } 
+              //     key={ item.id }
+              //     alt="Pokemon Sprite"
+              //     className="sprite" 
+              //     />
+              //   )
+              // })
+            }
+          </div>
+          
+        </div>
+      }
 
     </div>
   )

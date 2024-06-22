@@ -8,9 +8,15 @@ function HomePage() {
 
   return (
     <div className="flex flex-1 items-center justify-center">
-      <Button onClick={ printPlay }>
-        <Link to="/play">Play Now</Link>
-      </Button>
+        {/* cursor-pointer not showing  */}
+        <div className="cursor-pointer"> 
+          <Link to="/play">
+            <Button onClick={ printPlay }>
+              Play Now
+            </Button>
+          </Link>
+        </div>
+        
     </div>
     
   )
